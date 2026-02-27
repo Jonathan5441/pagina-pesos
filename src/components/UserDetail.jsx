@@ -1,73 +1,27 @@
 import { useState } from 'react';
 import BMIGauge from './BMIGauge';
-import { calculateWeightDifference, getLatestWeight, formatDate, calculateGoal, calculatePercentageChange, calculateIdealWeightRange } from '../utils/calculations';
+import { calculateWeightDifference, getLatestWeight, formatDate, calculateGoal, calculatePercentageChange, calculateIdealWeightRange, getUserAchievements } from '../utils/calculations';
 import WeightChart from './WeightChart';
 import HealthCard from './HealthCard';
 import './UserDetail.css';
 
-const UserDetail = ({ user, onBack, onUpdateUser }) => {
-    const [isAddingWeight, setIsAddingWeight] = useState(false);
+const UserDetail = ({ user, onBack, onUpdateHeight }) => {
     const [isEditingHeight, setIsEditingHeight] = useState(false);
-    const [isEditingName, setIsEditingName] = useState(false);
-    const [newWeight, setNewWeight] = useState('');
-    const [newDate, setNewDate] = useState(new Date().toISOString().split('T')[0]);
     const [newHeight, setNewHeight] = useState(user.height);
-    const [newName, setNewName] = useState(user.name);
 
     const latestWeight = getLatestWeight(user.weights);
     const difference = calculateWeightDifference(user.weights);
 
-    const handleAddWeight = (e) => {
-        e.preventDefault();
-        if (!newWeight || parseFloat(newWeight) <= 0) return;
-
-        const updatedUser = {
-            ...user,
-            weights: [...user.weights, { date: newDate, value: parseFloat(newWeight) }]
-        };
-
-        onUpdateUser(updatedUser);
-        setNewWeight('');
-        setNewDate(new Date().toISOString().split('T')[0]);
-        setIsAddingWeight(false);
-    };
-
-    const handleUpdateHeight = () => {
+    const handleUpdateHeight = async () => {
         if (newHeight <= 0) return;
-
-        const updatedUser = {
-            ...user,
-            height: parseInt(newHeight)
-        };
-
-        onUpdateUser(updatedUser);
+        await onUpdateHeight(user.id, parseInt(newHeight));
         setIsEditingHeight(false);
-    };
-
-    const handleUpdateName = () => {
-        if (!newName.trim()) return;
-
-        const updatedUser = {
-            ...user,
-            name: newName.trim()
-        };
-
-        onUpdateUser(updatedUser);
-        setIsEditingName(false);
-    };
-
-
-
-    const handleDeleteWeight = (index) => {
-        const updatedUser = {
-            ...user,
-            weights: user.weights.filter((_, i) => i !== index)
-        };
-        onUpdateUser(updatedUser);
     };
 
     // Sort weights by date (newest first)
     const sortedWeights = [...user.weights].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    const achievements = getUserAchievements(user);
 
     return (
         <div className="user-detail animate-fade-in">
@@ -76,27 +30,19 @@ const UserDetail = ({ user, onBack, onUpdateUser }) => {
                     ← Volver
                 </button>
                 <div className="user-detail-title">
-                    {isEditingName ? (
-                        <div className="inline-edit-name">
-                            <input
-                                type="text"
-                                value={newName}
-                                onChange={(e) => setNewName(e.target.value)}
-                                className="name-input"
-                                autoFocus
-                            />
-                            <button className="btn btn-success btn-sm" onClick={handleUpdateName}>✓</button>
-                            <button className="btn btn-danger btn-sm" onClick={() => {
-                                setNewName(user.name);
-                                setIsEditingName(false);
-                            }}>✗</button>
-                        </div>
-                    ) : (
-                        <div className="name-display">
-                            <h1>{user.name}</h1>
-                            <button className="btn-edit" onClick={() => setIsEditingName(true)}>✎</button>
-                        </div>
-                    )}
+                    <div className="name-display">
+                        <h1>{user.name}</h1>
+                        {achievements.length > 0 && (
+                            <div className="detail-badges">
+                                {achievements.map(badge => (
+                                    <div key={badge.id} className="detail-badge" title={badge.description}>
+                                        <span className="badge-icon">{badge.icon}</span>
+                                        <span className="badge-label">{badge.label}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
 
@@ -229,44 +175,13 @@ const UserDetail = ({ user, onBack, onUpdateUser }) => {
                     </div>
                 </div>
 
+
                 {/* Weight History Section */}
                 <div className="detail-section full-width">
                     <div className="history-card card">
                         <div className="history-header">
                             <h3>Historial de Peso</h3>
-                            <button
-                                className="btn btn-primary"
-                                onClick={() => setIsAddingWeight(!isAddingWeight)}
-                            >
-                                {isAddingWeight ? 'Cancelar' : '+ Agregar Peso'}
-                            </button>
                         </div>
-
-                        {isAddingWeight && (
-                            <form className="add-weight-form" onSubmit={handleAddWeight}>
-                                <div className="form-group">
-                                    <label>Fecha</label>
-                                    <input
-                                        type="date"
-                                        value={newDate}
-                                        onChange={(e) => setNewDate(e.target.value)}
-                                        required
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label>Peso (kg)</label>
-                                    <input
-                                        type="number"
-                                        step="0.1"
-                                        value={newWeight}
-                                        onChange={(e) => setNewWeight(e.target.value)}
-                                        placeholder="Ej: 70.5"
-                                        required
-                                    />
-                                </div>
-                                <button type="submit" className="btn btn-success">Guardar</button>
-                            </form>
-                        )}
 
                         <div className="weight-history-list">
                             {sortedWeights.map((weight, index) => (
@@ -275,12 +190,6 @@ const UserDetail = ({ user, onBack, onUpdateUser }) => {
                                         <span className="weight-history-date">{formatDate(weight.date)}</span>
                                         <span className="weight-history-value">{weight.value.toFixed(1)} kg</span>
                                     </div>
-                                    <button
-                                        className="btn-delete"
-                                        onClick={() => handleDeleteWeight(user.weights.indexOf(weight))}
-                                    >
-                                        🗑️
-                                    </button>
                                 </div>
                             ))}
 

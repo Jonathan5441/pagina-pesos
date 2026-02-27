@@ -261,3 +261,51 @@ export const getHealthTip = (bmiStatus) => {
 
     return finalPool[Math.floor(Math.random() * finalPool.length)];
 };
+/**
+ * Get achievements/badges for a user
+ * @param {object} user - User object
+ * @returns {array} Array of achievement objects
+ */
+export const getUserAchievements = (user) => {
+    const achievements = [];
+    if (!user.weights || user.weights.length === 0) return achievements;
+
+    const weights = user.weights;
+    const latestWeight = weights[weights.length - 1].value;
+
+    // 🔥 Constante: Más de 3 registros
+    if (weights.length >= 3) {
+        achievements.push({
+            id: 'constant',
+            icon: '🔥',
+            label: 'Constante',
+            description: 'Más de 3 registros'
+        });
+    }
+
+    // ⚡ Rayo: Bajó más de 1.5kg en el último registro
+    if (weights.length >= 2) {
+        const previousWeight = weights[weights.length - 2].value;
+        const diff = previousWeight - latestWeight;
+        if (diff >= 1.5) {
+            achievements.push({
+                id: 'fast',
+                icon: '⚡',
+                label: 'Rayo',
+                description: 'Bajó > 1.5kg'
+            });
+        }
+
+        // ✨ Manteniendo: Diferencia mínima (< 0.2kg)
+        if (Math.abs(diff) < 0.2) {
+            achievements.push({
+                id: 'stable',
+                icon: '✨',
+                label: 'Estable',
+                description: 'Peso mantenido'
+            });
+        }
+    }
+
+    return achievements;
+};

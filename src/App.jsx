@@ -1,35 +1,51 @@
 import { useState, useEffect } from 'react';
 import UserCard from './components/UserCard';
 import UserDetail from './components/UserDetail';
-import { initialUsers } from './data/initialData';
+import Leaderboard from './components/Leaderboard';
+import GroupStats from './components/GroupStats';
+import { fetchUsers, updateHeight } from './services/sheetsService';
 import './App.css';
 
 function App() {
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
+  // Cargar usuarios desde Google Sheets
+  const loadUsers = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await fetchUsers();
+      setUsers(data);
 
-  // Load users from localStorage or use initial data
-  useEffect(() => {
-    const savedUsers = localStorage.getItem('weightTrackerUsers');
-    if (savedUsers) {
-      setUsers(JSON.parse(savedUsers));
-    } else {
-      setUsers(initialUsers);
+      // Si hay un usuario seleccionado, actualizar sus datos
+      if (selectedUser) {
+        const updated = data.find(u => u.id === selectedUser.id);
+        if (updated) setSelectedUser(updated);
+      }
+    } catch (err) {
+      setError('Error al cargar los datos. Verifica tu conexión.');
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
+  };
+
+  useEffect(() => {
+    loadUsers();
   }, []);
 
-  // Save users to localStorage whenever they change
-  useEffect(() => {
-    if (users.length > 0) {
-      localStorage.setItem('weightTrackerUsers', JSON.stringify(users));
+  const handleUpdateHeight = async (userId, height) => {
+    try {
+      await updateHeight(userId, height);
+      // Recargar datos después de actualizar
+      await loadUsers();
+    } catch (err) {
+      console.error('Error al actualizar altura:', err);
     }
-  }, [users]);
-
-  const handleUpdateUser = (updatedUser) => {
-    setUsers(users.map(u => u.id === updatedUser.id ? updatedUser : u));
-    setSelectedUser(updatedUser);
   };
 
   // Filter users based on search
@@ -44,7 +60,7 @@ function App() {
           <UserDetail
             user={selectedUser}
             onBack={() => setSelectedUser(null)}
-            onUpdateUser={handleUpdateUser}
+            onUpdateHeight={handleUpdateHeight}
           />
         </div>
       </div>
@@ -75,27 +91,49 @@ function App() {
               className="search-input"
             />
           </div>
-
-
+          <button className="btn btn-refresh" onClick={loadUsers} title="Actualizar datos">
+            🔄 Actualizar
+          </button>
         </div>
 
-        <div className="users-grid">
-          {filteredUsers.map(user => (
-            <UserCard
-              key={user.id}
-              user={user}
-              onClick={setSelectedUser}
-            />
-          ))}
+        {loading && (
+          <div className="loading-state">
+            <div className="spinner"></div>
+            <p>Cargando datos...</p>
+          </div>
+        )}
 
-          {filteredUsers.length === 0 && (
-            <div className="empty-state-large">
-              <span className="empty-icon">🔍</span>
-              <h3>No se encontraron usuarios</h3>
-              <p>Intenta con otro término de búsqueda o filtro</p>
+        {error && (
+          <div className="error-state">
+            <span>⚠️</span>
+            <p>{error}</p>
+            <button className="btn btn-primary" onClick={loadUsers}>Reintentar</button>
+          </div>
+        )}
+
+        {!loading && !error && (
+          <>
+            <Leaderboard users={users} />
+            <GroupStats users={users} />
+            <div className="users-grid">
+              {filteredUsers.map(user => (
+                <UserCard
+                  key={user.id}
+                  user={user}
+                  onClick={setSelectedUser}
+                />
+              ))}
+
+              {filteredUsers.length === 0 && (
+                <div className="empty-state-large">
+                  <span className="empty-icon">🔍</span>
+                  <h3>No se encontraron usuarios</h3>
+                  <p>Intenta con otro término de búsqueda o filtro</p>
+                </div>
+              )}
             </div>
-          )}
-        </div>
+          </>
+        )}
       </div>
     </div>
   );

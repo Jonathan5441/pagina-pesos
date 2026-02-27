@@ -1,4 +1,4 @@
-import { calculateWeightDifference, getLatestWeight, formatDate, calculatePercentageChange } from '../utils/calculations';
+import { calculateWeightDifference, getLatestWeight, formatDate, calculatePercentageChange, getUserAchievements } from '../utils/calculations';
 import './UserCard.css';
 
 const UserCard = ({ user, onClick }) => {
@@ -26,8 +26,10 @@ const UserCard = ({ user, onClick }) => {
         feelingEmoji = mockingEmojis[Math.abs(emojiIndex)];
     }
 
+    const achievements = getUserAchievements(user);
+
     return (
-        <div className="user-card card" onClick={() => onClick(user)}>
+        <div className="user-card card minimal" onClick={() => onClick(user)}>
             <div className="user-card-header">
                 <div className="user-info">
                     <h3 className="user-name">
@@ -39,39 +41,15 @@ const UserCard = ({ user, onClick }) => {
                     <span className="weight-unit">kg</span>
                 </div>
             </div>
-
-            <div className="user-card-body">
-                <div className="stat-item">
-                    <span className="stat-label">Altura</span>
-                    <span className="stat-value">{user.height} cm</span>
+            {achievements.length > 0 && (
+                <div className="card-badges">
+                    {achievements.map(badge => (
+                        <span key={badge.id} className="card-badge" title={badge.description}>
+                            {badge.icon}
+                        </span>
+                    ))}
                 </div>
-
-                <div className="stat-item">
-                    <span className="stat-label">Último registro</span>
-                    <span className="stat-value">{latestDate}</span>
-                </div>
-
-                {hasMultipleWeights && (
-                    <>
-                        <div className="stat-item">
-                            <span className="stat-label">Diferencia</span>
-                            <span className={`stat-value ${difference > 0 ? 'positive' : difference < 0 ? 'negative' : 'neutral'}`}>
-                                {difference > 0 ? '↓' : difference < 0 ? '↑' : '='} {Math.abs(difference).toFixed(1)} kg
-                            </span>
-                        </div>
-                        <div className="stat-item">
-                            <span className="stat-label">Progreso Total</span>
-                            <span className={`stat-value ${percentChange < 0 ? 'positive' : percentChange > 0 ? 'negative' : 'neutral'}`}>
-                                {percentChange > 0 ? '↑' : percentChange < 0 ? '↓' : ''} {Math.abs(percentChange).toFixed(1)}%
-                            </span>
-                        </div>
-                    </>
-                )}
-            </div>
-
-            <div className="user-card-footer">
-                <span className="view-details">Ver detalles →</span>
-            </div>
+            )}
         </div>
     );
 };
