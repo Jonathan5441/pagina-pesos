@@ -17,8 +17,7 @@ export const initialUsers = [
         weights: [
             { date: "2026-01-21", value: 82.3 },
             { date: "2026-02-04", value: 79.9 },
-            { date: "2026-02-26", value: 79.8 },
-            { date: "2026-03-11", value: 78.7 }
+            { date: "2026-02-26", value: 78.8 }
         ]
     },
     {
@@ -28,8 +27,7 @@ export const initialUsers = [
         weights: [
             { date: "2026-01-21", value: 71.5 },
             { date: "2026-02-04", value: 70.2 },
-            { date: "2026-02-26", value: 68.9 },
-            { date: "2026-03-11", value: 65.1 }
+            { date: "2026-02-26", value: 68.9 }
         ]
     },
     {
@@ -39,8 +37,7 @@ export const initialUsers = [
         weights: [
             { date: "2026-01-21", value: 110.9 },
             { date: "2026-02-04", value: 109.4 },
-            { date: "2026-02-26", value: 106.3 },
-            { date: "2026-03-11", value: 105.1 }
+            { date: "2026-02-26", value: 106.3 }
         ]
     },
     {
@@ -50,8 +47,7 @@ export const initialUsers = [
         weights: [
             { date: "2026-01-21", value: 102.8 },
             { date: "2026-02-04", value: 100.3 },
-            { date: "2026-02-26", value: 101.5 },
-            { date: "2026-03-11", value: 102.5 }
+            { date: "2026-02-26", value: 101.5 }
         ]
     },
     {
@@ -61,8 +57,7 @@ export const initialUsers = [
         weights: [
             { date: "2026-01-21", value: 59.9 },
             { date: "2026-02-04", value: 58.7 },
-            { date: "2026-02-26", value: 58.5 },
-            { date: "2026-03-11", value: 58.9 }
+            { date: "2026-02-26", value: 58.5 }
         ]
     },
     {
@@ -80,8 +75,7 @@ export const initialUsers = [
         height: 150,
         weights: [
             { date: "2026-01-21", value: 88.2 },
-            { date: "2026-02-26", value: 88.2 },
-            { date: "2026-03-11", value: 88 }
+            { date: "2026-02-26", value: 88.2 }
         ]
     },
     {
@@ -99,8 +93,7 @@ export const initialUsers = [
         weights: [
             { date: "2026-01-21", value: 89.8 },
             { date: "2026-02-04", value: 88.2 },
-            { date: "2026-02-26", value: 87.3 },
-            { date: "2026-03-11", value: 85.9 }
+            { date: "2026-02-26", value: 86.1 }
         ]
     },
     {
@@ -110,8 +103,7 @@ export const initialUsers = [
         weights: [
             { date: "2026-01-21", value: 54.1 },
             { date: "2026-02-04", value: 55.2 },
-            { date: "2026-02-26", value: 54.1 },
-            { date: "2026-03-11", value: 53.9 }
+            { date: "2026-02-26", value: 54.1 }
         ]
     },
     {
@@ -131,8 +123,7 @@ export const initialUsers = [
         weights: [
             { date: "2026-01-21", value: 72.4 },
             { date: "2026-02-04", value: 71.1 },
-            { date: "2026-02-26", value: 71.8 },
-            { date: "2026-03-11", value: 71.3 }
+            { date: "2026-02-26", value: 71.8 }
         ]
     },
     {
@@ -140,8 +131,7 @@ export const initialUsers = [
         name: "JORGE",
         height: 185,
         weights: [
-            { date: "2026-01-21", value: 114.4 },
-            { date: "2026-03-11", value: 114.8 }
+            { date: "2026-01-21", value: 114.4 }
         ]
     },
     {
@@ -150,8 +140,7 @@ export const initialUsers = [
         height: 160,
         weights: [
             { date: "2026-02-04", value: 65.5 },
-            { date: "2026-02-26", value: 63.3 },
-            { date: "2026-03-11", value: 63.3 }
+            { date: "2026-02-26", value: 63.3 }
         ]
     },
     {
@@ -161,8 +150,7 @@ export const initialUsers = [
         weights: [
             { date: "2026-01-21", value: 75.6 },
             { date: "2026-02-04", value: 74.1 },
-            { date: "2026-02-26", value: 73.5 },
-            { date: "2026-03-11", value: 74 }
+            { date: "2026-02-26", value: 73.5 }
         ]
     }
 ];
